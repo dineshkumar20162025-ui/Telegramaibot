@@ -53,7 +53,7 @@ async def process_resolution(update: Update, context: ContextTypes.DEFAULT_TYPE)
     change_resolution(input_file, output_file, res)
 
     with open(output_file, "rb") as vid:
-    await update.message.reply_video(vid)
+        await update.message.reply_video(vid)
     
 
 # TRANSLATION FUNCTION
