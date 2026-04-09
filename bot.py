@@ -88,8 +88,8 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     output = translate_video(context.user_data["video"])
 
 try:
-    with open(output, "rb") as vid:
-        await update.message.reply_video(video=vid)
+    with open(output_file, "rb") as vid:
+        await update.message.reply_video(vid)
 except Exception as e:
     await update.message.reply_text("❌ Error occurred while processing")
 
