@@ -38,14 +38,22 @@ async def process_resolution(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
 
     res = update.message.text.replace("/", "")
-    input_file = context.user_data["video"]
-    output_file = f"outputs/output_{res}.mp4"
+input_file = context.user_data["video"]
 
-    await update.message.reply_text("⏳ Processing...")
+# ✅ KEEP ONLY THIS ONE
+if os.path.getsize(input_file) > 20 * 1024 * 1024:
+    await update.message.reply_text("❌ File too large (max 20MB)")
+    return
 
-    change_resolution(input_file, output_file, res)
+output_file = f"outputs/output_{res}.mp4"
 
-    await update.message.reply_video(video=open(output_file, "rb"))
+await update.message.reply_text("⏳ Processing...")
+
+change_resolution(input_file, output_file, res)
+
+with open(output_file, "rb") as vid:
+    await update.message.reply_video(video=vid)
+    
 
 # TRANSLATION FUNCTION
 def translate_video(input_video):
@@ -78,16 +86,17 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     output = translate_video(context.user_data["video"])
 
-    try:
-    await update.message.reply_video(video=open(output, "rb"))
+try:
+    with open(output, "rb") as vid:
+        await update.message.reply_video(video=vid)
 except Exception as e:
-    await update.message.reply_text(f"Error: {e}")
+    await update.message.reply_text("❌ Error occurred while processing")
 
 # MAIN
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.TEXT & filters.Regex("^/(480p|720p|1080p|2160p)$"), process_resolution))
+app.add_handler(CommandHandler(["480p", "720p", "1080p", "2160p"], process_resolution))
 app.add_handler(CommandHandler("translate", translate))
 app.add_handler(MessageHandler(filters.VIDEO, save_video))
 
