@@ -1,0 +1,6 @@
+python-telegram-bot==20.7
+ffmpeg-python
+moviepy
+openai-whisper
+googletrans==4.0.0-rc1
+gtts
