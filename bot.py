@@ -33,26 +33,27 @@ def change_resolution(input_file, output_file, resolution):
     os.system(f"ffmpeg -i {input_file} -vf scale=-2:{resolution} {output_file}")
 
 async def process_resolution(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     if "video" not in context.user_data:
         await update.message.reply_text("❌ Send video first")
         return
 
     res = update.message.text.replace("/", "")
-input_file = context.user_data["video"]
+    input_file = context.user_data["video"]
 
-# ✅ KEEP ONLY THIS ONE
-if os.path.getsize(input_file) > 20 * 1024 * 1024:
-    await update.message.reply_text("❌ File too large (max 20MB)")
-    return
+    # ✅ KEEP ONLY THIS ONE
+    if os.path.getsize(input_file) > 20 * 1024 * 1024:
+        await update.message.reply_text("❌ File too large (max 20MB)")
+        return
 
-output_file = f"outputs/output_{res}.mp4"
+    output_file = f"outputs/output_{res}.mp4"
 
-await update.message.reply_text("⏳ Processing...")
+    await update.message.reply_text("⏳ Processing...")
 
-change_resolution(input_file, output_file, res)
+    change_resolution(input_file, output_file, res)
 
-with open(output_file, "rb") as vid:
-    await update.message.reply_video(video=vid)
+    with open(output_file, "rb") as vid:
+    await update.message.reply_video(vid)
     
 
 # TRANSLATION FUNCTION
