@@ -1,7 +1,7 @@
 import os
 import whisper
 from gtts import gTTS
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 
@@ -63,7 +63,7 @@ def translate_video(input_video):
     hindi_text = result["text"]
 
     # translate
-    tamil_text = translator.translate(hindi_text, dest='ta').text
+    tamil_text = GoogleTranslator(source='hi', target='ta').translate(hindi_text)
 
     # text to speech
     tts = gTTS(tamil_text, lang='ta')
