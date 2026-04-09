@@ -10,7 +10,6 @@ BOT_TOKEN = "YOUR_BOT_TOKEN"
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-translator = Translator()
 model = whisper.load_model("base")
 
 # START COMMAND
