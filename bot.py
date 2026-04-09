@@ -10,8 +10,9 @@ BOT_TOKEN = "YOUR_BOT_TOKEN"
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-model = whisper.load_model("base")
+model = whisper.load_model("tiny")
 
+# model = whisper.load_model("tiny")
 # START COMMAND
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
