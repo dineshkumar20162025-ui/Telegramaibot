@@ -1,5 +1,4 @@
 import os
-import whisper
 from gtts import gTTS
 from deep_translator import GoogleTranslator
 from telegram import Update
@@ -10,9 +9,6 @@ BOT_TOKEN = "YOUR_BOT_TOKEN"
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-model = whisper.load_model("tiny")
-
-# model = whisper.load_model("tiny")
 # START COMMAND
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -58,12 +54,8 @@ def translate_video(input_video):
     # extract audio
     os.system(f"ffmpeg -i {input_video} {audio_file}")
 
-    # speech to text
-    result = model.transcribe(audio_file)
-    hindi_text = result["text"]
-
     # translate
-    tamil_text = GoogleTranslator(source='hi', target='ta').translate(hindi_text)
+    tamil_text = GoogleTranslator(source='auto', target='ta').translate("This is a test video")
 
     # text to speech
     tts = gTTS(tamil_text, lang='ta')
@@ -86,13 +78,16 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     output = translate_video(context.user_data["video"])
 
+    try:
     await update.message.reply_video(video=open(output, "rb"))
+except Exception as e:
+    await update.message.reply_text(f"Error: {e}")
 
 # MAIN
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler(["480p", "720p", "1080p", "2160p"], process_resolution))
+app.add_handler(MessageHandler(filters.TEXT & filters.Regex("^/(480p|720p|1080p|2160p)$"), process_resolution))
 app.add_handler(CommandHandler("translate", translate))
 app.add_handler(MessageHandler(filters.VIDEO, save_video))
 
